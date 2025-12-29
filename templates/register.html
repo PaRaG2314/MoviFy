@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MoviFy - Register</title>
+<style>
+  .site-footer {
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .footer-content {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .footer-content p {
+    margin: 4px 0;
+  }
+</style>
+
+<style>
+/* BASE */
+body {
+    margin: 0;
+    background: #030303;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: white;
+    overflow-x: hidden;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+}
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* FIX: Perfect Center */
+.container {
+    width: 100%;
+    max-width: 380px;
+    margin: 120px auto 0 auto; /* <-- centered */
+    padding: 36px;
+    box-sizing: border-box;     /* <-- prevents shifting */
+
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,0,0,0.18);
+    box-shadow: 0 0 32px rgba(255,0,0,0.35);
+
+    text-align: center;
+    animation: popIn 0.45s ease;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+h2 {
+    font-size: 30px;
+    margin-bottom: 8px;
+    font-weight: 900;
+    text-shadow: 0 0 18px rgba(255,0,0,0.6);
+}
+
+p { color: #ccc; }
+
+/* INPUT */
+input {
+    width: 100%;
+    padding: 14px;
+    margin-top: 16px;
+    background: rgba(10,10,10,0.75);
+    border: 1px solid rgba(255,0,0,0.25);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    box-sizing: border-box;   /* FIX */
+}
+input:focus {
+    border-color: #ff1f33;
+    outline: none;
+    box-shadow: 0 0 20px rgba(255,0,0,0.7);
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 26px;
+    background: #e50914;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,0,0,0.5);
+}
+button:hover {
+    background: #ff1f33;
+    box-shadow: 0 0 28px rgba(255,0,0,0.9);
+}
+
+/* ERROR */
+.error {
+    margin-top: 12px;
+    color: #ff7777;
+    font-size: 14px;
+}
+
+/* LINK */
+.small-link {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #bbb;
+}
+.small-link a {
+    color: #ff1f33;
+    text-decoration: none;
+}
+.small-link a:hover {
+    text-decoration: underline;
+}
+
+/* MOBILE FIX */
+@media(max-width: 480px) {
+    .container {
+        margin: 80px auto;
+        padding: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Create your MoviFy Account</h2>
+    <p>Join and start exploring movies!</p>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Choose a username" required>
+        <input type="password" name="password" placeholder="Choose a password" required>
+        <input type="password" name="confirm" placeholder="Confirm password" required>
+        <button type="submit">Create Account →</button>
+    </form>
+
+    <div class="small-link">
+        Already have an account? <a href="{{ url_for('login') }}">Login</a>
+    </div>
+</div>
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>© 2025 MoviFy · Movie Recommendation System</p>
+    <p>Built with ❤️ using Python, Flask, and Machine Learning.</p>
+  </div>
+</footer>
+
+</body>
+</html>

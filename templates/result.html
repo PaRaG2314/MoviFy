@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Recommendations - {{ main_movie.title }}</title>
+<style>
+  .site-footer {
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .footer-content {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .footer-content p {
+    margin: 4px 0;
+  }
+</style>
+<style>
+  .result-header {
+    padding: 16px 30px;
+    background: rgba(0, 0, 0, 0.9);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #e50914;
+    text-decoration: none;
+  }
+</style>
+
+<style>
+  /* Result Page Search Bar */
+.result-search-container {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 20px;
+}
+
+.result-search-container form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.result-search-input {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  background: rgba(10,10,10,0.8);
+  color: white;
+}
+
+.result-search-input:focus {
+  outline: none;
+  border-color: #ff1f33;
+  box-shadow: 0 0 12px rgba(255,0,0,0.6);
+}
+
+.result-search-btn {
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.result-search-btn:hover {
+  background: #ff1f33;
+}
+
+</style>
+
+<style>
+  :root{
+    --bg:#020202;
+    --panel:#0f0f0f;
+    --muted:#bdbdbd;
+    --accent:#e50914;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#030303,#0b0b0b);
+    color:#fff;
+    font-family:"Segoe UI", Roboto, Arial, sans-serif;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    padding:16px 24px;
+    background:linear-gradient(90deg,rgba(0,0,0,0.6),transparent)
+  }
+  .logo{font-weight:800;color:var(--accent);letter-spacing:1px;font-size:18px;}
+
+  .container{max-width:1100px;margin:26px auto;padding:0 18px;}
+
+  /* HERO */
+  .hero{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  .poster-card{
+    background:var(--panel);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  }
+  .poster-card img{
+    width:100%;
+    display:block;
+    height:auto;
+    object-fit:cover;
+  }
+
+  .hero-info{padding:6px 4px;}
+  .title{font-size:28px;margin:6px 0;font-weight:800;}
+  .meta{color:var(--muted);margin-bottom:8px;}
+  .imdb{font-weight:700;color:var(--accent);margin-left:8px;}
+
+  .trailer-wrap{
+    margin-top:16px;
+    background:var(--glass);
+    padding:10px;
+    border-radius:10px;
+  }
+  .trailer-wrap iframe{
+    width:100%;
+    height:360px;
+    border-radius:8px;
+    border:0;
+  }
+
+  /* NEW: Streaming Providers */
+  .providers-box{
+    margin-top:18px;
+    padding:12px;
+    background:var(--panel);
+    border-radius:12px;
+  }
+  .providers-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .providers-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .provider-tag{
+    background:#1a1a1a;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .provider-tag img{
+    height:20px;
+    width:20px;
+    border-radius:4px;
+    object-fit:cover;
+  }
+  .provider-none{
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  /* recommendations row */
+  .section-title{margin:28px 0 12px 0;font-size:20px;font-weight:700}
+  .row{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    padding-bottom:8px;
+    scroll-snap-type:x mandatory;
+  }
+  .card{
+    min-width:180px;
+    max-width:180px;
+    background:var(--panel);
+    border-radius:10px;
+    padding:8px;
+    transition:0.25s ease;
+    cursor:pointer;
+    scroll-snap-align:start;
+    position:relative;
+  }
+  .card img{
+    width:100%;
+    height:260px;
+    border-radius:8px;
+    object-fit:cover;
+    display:block;
+  }
+  .card-title{margin-top:8px;font-size:14px;font-weight:700}
+  .card-sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+  .card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 18px 40px rgba(0,0,0,0.6);
+  }
+
+  .overlay{
+    position:absolute;
+    inset:8px;
+    border-radius:8px;
+    background:linear-gradient(180deg,rgba(0,0,0,0.4),rgba(0,0,0,0.8));
+    opacity:0;
+    transition:opacity .18s ease;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+  .card:hover .overlay{opacity:1;}
+
+  .back-btn{
+    display:inline-block;
+    margin:24px 0 80px 0;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    padding:10px 14px;
+    border-radius:10px;
+    color:var(--muted);
+    text-decoration:none;
+  }
+
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr;gap:14px}
+    .trailer-wrap iframe{height:220px}
+  }
+</style>
+</head>
+
+<body>
+<div class="result-header">
+  <a href="/" class="logo">MoviFy</a>
+</div>
+
+<div class="result-search-container">
+  <form method="POST" action="{{ url_for('recommend_movie') }}">
+    <input
+      type="text"
+      name="movie"
+      placeholder="Search another movie..."
+      required
+      class="result-search-input"
+    >
+    <button type="submit" class="result-search-btn">
+      Search
+    </button>
+  </form>
+</div>
+
+<div class="container">
+
+  <!-- MAIN MOVIE -->
+  <div class="hero">
+
+    <div class="poster-card">
+      {% if main_movie.poster %}
+        <img src="{{ url_for('static', filename='posters/' + main_movie.poster) }}"
+             alt="{{ main_movie.title }} poster">
+      {% else %}
+        <img src="{{ url_for('static', filename='no_image.png') }}"
+             alt="No image">
+      {% endif %}
+    </div>
+
+    <div class="hero-info">
+      <div class="title">{{ main_movie.title }}</div>
+      <div class="meta">
+        {{ main_movie.genres }}
+        <span class="imdb">⭐ {{ main_movie.rating }}/10</span>
+      </div>
+
+      {% if main_movie.trailers and main_movie.trailers|length > 0 %}
+      <div class="trailer-wrap">
+        <iframe src="https://www.youtube.com/embed/{{ main_movie.trailers[0] }}?rel=0"
+                allowfullscreen></iframe>
+      </div>
+      {% else %}
+      <div style="margin-top:16px;color:var(--muted)">Trailer not available</div>
+      {% endif %}
+
+      <!-- ⭐ NEW: Streaming Providers Section -->
+      <div class="providers-box">
+        <div class="providers-title">Available On:</div>
+
+        {% if main_movie.providers and main_movie.providers|length > 0 %}
+        <div class="providers-list">
+          {% for p in main_movie.providers %}
+          <div class="provider-tag">
+            {% if p.logo %}
+              <img src="https://image.tmdb.org/t/p/w45{{ p.logo }}" alt="{{ p.name }}">
+            {% endif %}
+            {{ p.name }}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <div class="provider-none">Not Available in India</div>
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div style="margin-top:28px">
+    <div class="section-title">Recommended for you</div>
+    <div class="row" id="recRow">
+
+      {% for movie in recommendations %}
+      <div class="card" onclick="openMovie('{{ movie.title|escape }}')">
+
+        {% if movie.poster %}
+          <img src="{{ url_for('static', filename='posters/' + movie.poster) }}"
+               alt="{{ movie.title }} poster">
+        {% else %}
+          <img src="{{ url_for('static', filename='no_image.png') }}"
+               alt="No image">
+        {% endif %}
+
+        <div class="card-title">{{ movie.title }}</div>
+        <div class="card-sub">⭐ {{ movie.rating }}/10</div>
+
+        <div class="overlay">
+          <div style="font-weight:700">{{ movie.title }}</div>
+          <div style="font-size:12px;color:#ddd;margin-top:6px">
+            {{ movie.genres }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <a class="back-btn" href="/">⬅ Back</a>
+</div>
+
+<script>
+// drag scroll
+const slider = document.getElementById('recRow');
+let pressed=false, startX, scrollLeft;
+
+slider.addEventListener('mousedown', e=>{
+  pressed=true;
+  startX = e.pageX - slider.offsetLeft;
+  scrollLeft = slider.scrollLeft;
+  slider.style.cursor='grabbing';
+});
+slider.addEventListener('mouseleave', ()=>{ pressed=false; slider.style.cursor='default'; });
+slider.addEventListener('mouseup', ()=>{ pressed=false; slider.style.cursor='default'; });
+slider.addEventListener('mousemove', e=>{
+  if(!pressed) return;
+  e.preventDefault();
+  const x = e.pageX - slider.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  slider.scrollLeft = scrollLeft - walk;
+});
+
+// open movie
+function openMovie(title){
+  const form = document.createElement('form');
+  form.method='POST';
+  form.action='/recommend';
+  const input=document.createElement('input');
+  input.type='hidden';
+  input.name='movie';
+  input.value=title;
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>© 2025 MoviFy · Movie Recommendation System</p>
+    <p>Built with ❤️ using Python, Flask, and Machine Learning.</p>
+  </div>
+</footer>
+
+</body>
+</html>

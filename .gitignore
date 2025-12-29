@@ -1,0 +1,9 @@
+__pycache__/
+*.db
+*.sqlite3
+.env
+*.pyc
+static/posters/*
+!/static/posters/sample_image.jpg
+movies.csv
+ratings.csv

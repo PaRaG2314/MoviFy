@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MoviFy</title>
+<style>
+  .site-footer {
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .footer-content {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .footer-content p {
+    margin: 4px 0;
+  }
+</style>
+
+<style>
+/* ------------------------------------------------------
+   GLOBAL BASE STYLE
+-------------------------------------------------------*/
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #181818 0, #050505 40%, #000 100%);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: white;
+  overflow-x: hidden;
+  position: relative;
+  animation: fadeIn 0.7s ease forwards;
+  opacity: 0;
+}
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* ------------------------------------------------------
+   BACKGROUND POSTERS
+-------------------------------------------------------*/
+.global-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  opacity: 0.28;
+  filter: blur(14px) brightness(0.6) saturate(1.2);
+  z-index: -1;  /* FIXED: posters now visible */
+}
+.global-bg img {
+  position: absolute;
+  width: 180px;
+  height: 260px;
+  border-radius: 16px;
+  object-fit: cover;
+  opacity: 0.75;
+  transition: 1.2s ease;
+}
+
+/* Dark gradient overlay (BEHIND posters now) */
+.global-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.95));
+  z-index: -2; /* FIXED */
+}
+
+/* ------------------------------------------------------
+   HEADER
+-------------------------------------------------------*/
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 28px;
+  z-index: 50;
+  position: relative;
+}
+.logo {
+  position: relative;
+  font-weight: 900;
+  font-size: 28px;
+  color: #ff1f33;
+  text-shadow: 0 0 12px rgba(255, 20, 30, 0.9);
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  transition: transform 0.25s ease, text-shadow 0.25s ease;
+}
+
+/* Glow + Scale */
+.logo:hover {
+  transform: scale(1.14);
+  text-shadow: 0 0 25px rgba(255, 0, 0, 1);
+}
+
+/* Shimmer line */
+.logo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,0.7),
+      transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+
+/* Move shimmer across on hover */
+.logo:hover::after {
+  left: 120%;
+}
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+.header-username {
+  color: #dddddd;
+}
+.header-logout {
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e50914;
+  text-decoration: none;
+  font-size: 13px;
+  background: rgba(229,9,20,0.1);
+  transition: 0.2s ease;
+}
+.header-logout:hover {
+  background: #e50914;
+  box-shadow: 0 0 14px rgba(255,0,0,0.7);
+}
+
+/* ------------------------------------------------------
+   SEARCH BAR + HERO
+-------------------------------------------------------*/
+.hero {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+.hero h1 {
+  font-size: 48px;
+  font-weight: 900;
+  text-shadow: 0 0 25px rgba(255,20,20,0.5);
+  animation: glowFade 2.3s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+@keyframes glowFade {
+  0%, 100% { text-shadow: 0 0 18px rgba(255,20,20,0.5); }
+  50% { text-shadow: 0 0 40px rgba(255,0,0,0.9); }
+}
+.hero p {
+  color: #bbbbbb;
+  font-size: 17px;
+  margin: 0;
+}
+
+.search-top {
+  text-align: center;
+  margin-top: 18px;
+  z-index: 50;
+  position: relative;
+}
+.search-top form {
+  display: inline-block;
+  width: 100%;
+  max-width: 720px;
+}
+.search-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.search-top input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 999px;
+  background: rgba(10,10,10,0.9);
+  border: 1px solid #333;
+  color: white;
+  box-shadow: 0 0 12px rgba(229, 9, 20, 0.25);
+  font-size: 15px;
+}
+.search-top input:focus {
+  outline: none;
+  border-color: #ff1f33;
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.7);
+}
+.search-top button {
+  background: #e50914;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 0 14px rgba(255, 30, 30, 0.4);
+  white-space: nowrap;
+}
+.search-top button:hover {
+  background: #ff1f33;
+  box-shadow: 0 0 18px rgba(255, 20, 20, 0.9);
+}
+
+/* AUTOCOMPLETE DROPDOWN */
+#suggestions {
+  width: 100%;
+  max-width: 720px;
+  background: #111;
+  border-radius: 16px;
+  display: none;
+  max-height: 230px;
+  overflow-y: auto;
+  margin: 8px auto 0;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.8);
+  text-align: left;
+}
+.suggestion-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid #1f1f1f;
+}
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+.suggestion-item:hover {
+  background: #222;
+}
+
+/* ------------------------------------------------------
+   ROW TITLES + CONTAINER
+-------------------------------------------------------*/
+#content {
+  padding-bottom: 80px;
+}
+.row-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 32px 25px 12px;
+  text-shadow: 0 0 12px rgba(255,20,20,0.4);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.row-title::after {
+  content: "";
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(90deg, #ff1f33, transparent);
+  opacity: 0.7;
+}
+
+/* ------------------------------------------------------
+   MOVIE ROW
+-------------------------------------------------------*/
+.movie-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 0 25px 25px;
+  scrollbar-width: none;
+}
+.movie-row::-webkit-scrollbar { display: none; }
+
+.movie-card {
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+  position: relative;
+}
+.movie-card:hover {
+  transform: translateY(-6px) scale(1.08);
+}
+.movie-card img {
+  width: 150px;
+  height: 220px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #222;
+  box-shadow: 0 0 18px rgba(255,0,0,0.35);
+  transition: 0.25s ease;
+}
+.movie-card:hover img {
+  box-shadow: 0 0 32px rgba(255,0,0,0.9);
+}
+.movie-title {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #eeeeee;
+}
+
+/* ------------------------------------------------------
+   MODAL POPUP
+-------------------------------------------------------*/
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+  backdrop-filter: blur(10px);
+}
+.modal-box {
+  width: 95%;
+  max-width: 850px;
+  background: #141414;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  animation: popInModal 0.3s ease;
+  box-shadow: 0 0 30px rgba(255,0,0,0.45);
+}
+@keyframes popInModal {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.modal-left img {
+  width: 260px;
+  height: 380px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.modal-right {
+  flex: 1;
+  min-width: 260px;
+}
+.modal-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.modal-rating { color: #ff3445; margin-top: 4px; font-size: 18px; }
+.modal-plot { margin-top: 12px; font-size: 15px; color: #ddd; line-height: 1.5; }
+.modal-trailer iframe {
+  width: 100%;
+  height: 260px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: none;
+}
+.close-btn {
+  margin-top: 18px;
+  background: #e50914;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s ease;
+  box-shadow: 0 0 14px rgba(255,0,0,0.45);
+}
+.close-btn:hover {
+  background: #ff1f33;
+  box-shadow: 0 0 25px rgba(255,0,0,0.9);
+}
+
+/* ------------------------------------------------------
+   MODERN CHATBOT UI
+-------------------------------------------------------*/
+/* Floating Button */
+#chatbot-btn {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  color: #ffffff;
+  font-size: 42px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  text-shadow: 0 0 12px rgba(255,255,255,0.35);
+  z-index: 10000;
+}
+#chatbot-btn:hover {
+  transform: scale(1.18);
+  text-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+/* Chat Window */
+#chatbot-window {
+  position: fixed;
+  bottom: 100px;
+  right: 26px;
+  width: 350px;
+  height: 500px;
+  background: #090909;
+  color: white;
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* Header */
+.chatbot-header {
+  background: linear-gradient(135deg, #1a1a1a, #3b0b12);
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.chatbot-header span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chatbot-header span small {
+  font-size: 11px;
+  color: #bbbbbb;
+}
+#chatbot-close {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Chat Messages Area */
+#chat-area {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* User Message */
+.user-msg {
+  align-self: flex-end;
+  background: #ff0048;
+  padding: 9px 13px;
+  border-radius: 16px 4px 16px 16px;
+  max-width: 75%;
+  font-size: 14px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Bot Message */
+.bot-msg {
+  align-self: flex-start;
+  background: #181818;
+  padding: 9px 13px;
+  border-radius: 4px 16px 16px 16px;
+  max-width: 75%;
+  font-size: 14px;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* Input Area */
+.chat-input-area {
+  display: flex;
+  padding: 10px;
+  background: #101010;
+  border-top: 1px solid #222;
+}
+#chat-input {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: #f5f5f5;
+}
+#chat-send {
+  margin-left: 8px;
+  background: #ff0048;
+  border: none;
+  color: white;
+  padding: 9px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* Typing Indicator */
+.typing {
+  align-self: flex-start;
+  background: #181818;
+  padding: 7px 12px;
+  border-radius: 16px;
+  width: 72px;
+  text-align: center;
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------------*/
+@media(max-width: 900px) {
+  .hero h1 { font-size: 38px; }
+}
+@media(max-width: 600px){
+  header { padding: 14px 16px; }
+  .hero h1{ font-size:32px; }
+  .movie-card img{ width:120px; height:175px; }
+  .movie-card{ width:120px; }
+
+  #chatbot-window {
+    width: 92%;
+    right: 4%;
+    bottom: 90px;
+    height: 430px;
+  }
+  #chatbot-btn {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- POSTER BACKGROUND + OVERLAY -->
+<div class="global-bg" id="posterBG"></div>
+<div class="global-overlay"></div>
+
+<header>
+  <a href="/" class="logo" style="text-decoration:none;">MoviFy</a>
+  {% if session.get('username') %}
+  <div class="header-right">
+    <div class="header-username">Welcome, <b>{{ session['username'] }}</b></div>
+    <a href="/logout" class="header-logout">Logout</a>
+  </div>
+  {% endif %}
+</header>
+
+<!-- HERO + SEARCH -->
+<div class="hero">
+  <h1>Welcome to MoviFy</h1>
+  <p>Your one-stop destination for entertainment.</p>
+</div>
+
+<div class="search-top">
+  <form method="POST" action="/recommend" autocomplete="off">
+    <div class="search-row">
+      <input id="movie" name="movie" placeholder="Search movies, shows, actors..." />
+      <button type="submit">Search</button>
+    </div>
+    <div id="suggestions"></div>
+  </form>
+</div>
+
+<!-- MOVIE ROWS -->
+<div id="content"></div>
+
+<!-- MODERN CHATBOT -->
+<div id="chatbot-btn">🤖</div>
+
+<div id="chatbot-window">
+  <div class="chatbot-header">
+    <span>🎬 MoviFy AI <small>Movie Assistant</small></span>
+    <button id="chatbot-close">×</button>
+  </div>
+  <div id="chat-area"></div>
+  <div class="chat-input-area">
+    <input type="text" id="chat-input" placeholder="Ask me about movies..." />
+    <button id="chat-send">➤</button>
+  </div>
+</div>
+
+<!-- MOVIE MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <div class="modal-left"><img id="mPoster" alt="Poster"></div>
+    <div class="modal-right">
+      <div class="modal-title" id="mTitle"></div>
+      <div class="modal-rating" id="mRating"></div>
+      <div class="modal-plot" id="mPlot"></div>
+      <div class="modal-trailer" id="mTrailerBox"></div>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* -----------------------------------------
+   BACKGROUND POSTERS
+-----------------------------------------*/
+function loadBackgroundPosters(){
+  const bg = document.getElementById("posterBG");
+
+  fetch("/homepage_data")
+    .then(r => r.json())
+    .then(data => {
+      let posters = [];
+
+      data.trending.forEach(m => posters.push(m.poster));
+      Object.values(data.genres).forEach(list => list.forEach(m => posters.push(m.poster)));
+
+      posters = posters.filter(Boolean).slice(0, 70);
+
+      posters.forEach(p => {
+        const img = document.createElement("img");
+        img.src = `/static/posters/${p}`;
+        img.style.top = `${Math.random()*100}%`;
+        img.style.left = `${Math.random()*100}%`;
+        img.style.transform = `rotate(${(Math.random()*20)-10}deg)`;
+        bg.appendChild(img);
+      });
+    });
+}
+
+/* -----------------------------------------
+   MOVIE MODAL
+-----------------------------------------*/
+function showMovie(title){
+  fetch(`/movie_details/${encodeURIComponent(title)}`)
+    .then(r=>r.json())
+    .then(m=>{
+        document.getElementById("mTitle").innerText = m.title || "";
+        document.getElementById("mRating").innerText = "⭐ IMDb: " + (m.rating || "N/A");
+        document.getElementById("mPlot").innerText = m.plot || "Plot not available.";
+
+        let imgSrc = m.poster ? `/static/posters/${m.poster}` : "/static/posters/no_image.png";
+        document.getElementById("mPoster").src = imgSrc;
+
+        document.getElementById("mTrailerBox").innerHTML =
+          (m.trailers && m.trailers.length)
+            ? `<iframe src="https://www.youtube.com/embed/${m.trailers[0]}" allowfullscreen></iframe>`
+            : `<p style="color:#aaa;font-size:14px;margin-top:10px;">Trailer not available</p>`;
+
+        document.getElementById("modal").style.display = "flex";
+    });
+}
+function closeModal(){ document.getElementById("modal").style.display = "none"; }
+
+/* -----------------------------------------
+   MOVIE CARD TEMPLATE
+-----------------------------------------*/
+function movieCardHTML(m){
+  let safeTitle = (m.title || "").replace(/'/g, "\\'");
+  let img = m.poster ? `/static/posters/${m.poster}` : "/static/posters/no_image.png";
+  return `
+    <div class="movie-card" onclick="showMovie('${safeTitle}')">
+        <img src="${img}" loading="lazy">
+        <div class="movie-title">${m.title || ""}</div>
+    </div>
+  `;
+}
+
+/* -----------------------------------------
+   MOVIE ROWS
+-----------------------------------------*/
+function renderRows(data){
+  const c = document.getElementById("content");
+
+  c.innerHTML += `
+    <div class="row-title">🔥 Trending Now</div>
+    <div class="movie-row" id="trending"></div>
+  `;
+  let t = document.getElementById("trending");
+  data.trending.forEach(m=>t.innerHTML += movieCardHTML(m));
+
+  Object.keys(data.genres).forEach(g=>{
+    const id = g.replace(/ /g,"_");
+    c.innerHTML += `
+      <div class="row-title">${g}</div>
+      <div class="movie-row" id="${id}"></div>
+    `;
+    const row = document.getElementById(id);
+    data.genres[g].forEach(m=>row.innerHTML += movieCardHTML(m));
+  });
+}
+
+/* -----------------------------------------
+   AUTOCOMPLETE
+-----------------------------------------*/
+const movieInput = document.getElementById("movie");
+const suggestionsBox = document.getElementById("suggestions");
+
+if (movieInput) {
+  movieInput.addEventListener("input", function() {
+    const q = this.value.trim();
+    if (!q) {
+      suggestionsBox.style.display = "none";
+      suggestionsBox.innerHTML = "";
+      return;
+    }
+
+    fetch(`/autocomplete?query=${encodeURIComponent(q)}`)
+      .then(r => r.json())
+      .then(list => {
+        if (!list || !list.length) {
+          suggestionsBox.style.display = "none";
+          suggestionsBox.innerHTML = "";
+          return;
+        }
+        suggestionsBox.innerHTML = "";
+        list.forEach(title => {
+          const div = document.createElement("div");
+          div.className = "suggestion-item";
+          div.textContent = title;
+          div.onclick = () => {
+            movieInput.value = title;
+            suggestionsBox.style.display = "none";
+          };
+          suggestionsBox.appendChild(div);
+        });
+        suggestionsBox.style.display = "block";
+      })
+      .catch(() => {
+        suggestionsBox.style.display = "none";
+      });
+  });
+
+  // hide suggestions when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!suggestionsBox.contains(e.target) && e.target !== movieInput) {
+      suggestionsBox.style.display = "none";
+    }
+  });
+}
+
+/* -----------------------------------------
+   MODERN CHATBOT
+-----------------------------------------*/
+const chatbotBtn = document.getElementById("chatbot-btn");
+const chatbotWindow = document.getElementById("chatbot-window");
+const closeBtn = document.getElementById("chatbot-close");
+const chatArea = document.getElementById("chat-area");
+const chatInput = document.getElementById("chat-input");
+const chatSend = document.getElementById("chat-send");
+
+function openChat() {
+  chatbotWindow.style.display = "flex";
+  chatInput.focus();
+}
+function closeChat() {
+  chatbotWindow.style.display = "none";
+}
+
+if (chatbotBtn) chatbotBtn.onclick = openChat;
+if (closeBtn) closeBtn.onclick = closeChat;
+
+function addMessage(msg, type) {
+  const div = document.createElement("div");
+  div.className = type === "user" ? "user-msg" : "bot-msg";
+  div.innerText = msg;
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function addTyping() {
+  const div = document.createElement("div");
+  div.className = "typing";
+  div.innerText = "Typing...";
+  div.id = "typing";
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById("typing");
+  if (t) t.remove();
+}
+
+async function sendChatMessage() {
+  let text = chatInput.value.trim();
+  if (!text) return;
+
+  addMessage(text, "user");
+  chatInput.value = "";
+
+  addTyping();
+
+  try {
+    const res = await fetch("/chatbot", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+    removeTyping();
+    addMessage(data.reply || "AI Error.", "bot");
+
+  } catch (e) {
+    removeTyping();
+    addMessage("Error contacting AI backend.", "bot");
+  }
+}
+
+if (chatSend) chatSend.onclick = sendChatMessage;
+if (chatInput) {
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  });
+}
+
+// Optional: welcome message
+addMessage("Hi! I'm your MoviFy AI assistant. Ask me for movie recommendations, genres, or similar movies.", "bot");
+
+/* -----------------------------------------
+   STARTUP
+-----------------------------------------*/
+fetch("/homepage_data")
+  .then(r=>r.json())
+  .then(data=>{
+    renderRows(data);
+    loadBackgroundPosters();
+  });
+</script>
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>© 2025 MoviFy · Movie Recommendation System</p>
+    <p>Built with ❤️ using Python, Flask, and Machine Learning.</p>
+  </div>
+</footer>
+
+</body>
+</html>
